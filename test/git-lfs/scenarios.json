@@ -19,6 +19,13 @@
             }
         }
     },
+    "noLfsFiles": {
+        "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+        "remoteUser": "vscode",
+        "features": {
+            "git-lfs": {}
+        }
+    },
     "use_github": {
         "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
         "remoteUser": "vscode",

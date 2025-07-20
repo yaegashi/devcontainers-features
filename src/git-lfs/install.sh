@@ -266,7 +266,7 @@ if [ "${AUTO_PULL}" != "true" ]; then
 fi
 
 # Check if repo is a git lfs repo.
-if ! git lfs ls-files > /dev/null 2>&1; then
+if [ -z "$(git lfs ls-files 2>/dev/null)" ]; then
     echo "(!) Skipping automatic 'git lfs pull' because no git lfs files were detected"
     exit 0
 fi
