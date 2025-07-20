@@ -27,19 +27,23 @@ git commit -m "Initial commit without LFS"
 # Test that git lfs ls-files returns empty output (our fix checks this)
 check "git lfs ls-files returns empty output" test -z "$(git lfs ls-files 2>/dev/null)"
 
-# Test that the script logic works correctly
-# Simulate what the pull-git-lfs-artifacts.sh script does
-AUTO_PULL="true"
-if [ "${AUTO_PULL}" = "true" ] && [ -z "$(git lfs ls-files 2>/dev/null)" ]; then
-    # This should be the path taken for repos without LFS files
-    echo "(!) Correctly detected no LFS files and would skip git lfs install"
-    SUCCESS=true
-else
-    echo "(!) ERROR: Did not correctly detect absence of LFS files"
-    SUCCESS=false
-fi
+# Verify no hooks exist before running the script
+HOOKS_BEFORE=$(find .git/hooks -type f ! -name '*.sample' | wc -l)
+check "no git hooks before script" test "$HOOKS_BEFORE" -eq 0
 
-check "correctly detects no LFS files" test "$SUCCESS" = "true"
+# Run the actual pull-git-lfs-artifacts.sh script to test the real behavior
+echo "Running pull-git-lfs-artifacts.sh script..."
+/usr/local/share/pull-git-lfs-artifacts.sh
+
+# Verify that git lfs install was NOT executed by checking no hooks were installed
+HOOKS_AFTER=$(find .git/hooks -type f ! -name '*.sample' | wc -l)
+check "no git hooks installed after script" test "$HOOKS_AFTER" -eq 0
+
+# Double check: specifically look for the hooks that git lfs install would create
+check "no post-merge hook" test ! -f .git/hooks/post-merge
+check "no pre-push hook" test ! -f .git/hooks/pre-push  
+check "no post-commit hook" test ! -f .git/hooks/post-commit
+check "no post-checkout hook" test ! -f .git/hooks/post-checkout
 
 # Clean up
 cd /tmp
