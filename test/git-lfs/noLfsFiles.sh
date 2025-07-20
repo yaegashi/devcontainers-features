@@ -41,7 +41,7 @@ check "no git hooks installed after script" test "$HOOKS_AFTER" -eq 0
 
 # Double check: specifically look for the hooks that git lfs install would create
 check "no post-merge hook" test ! -f .git/hooks/post-merge
-check "no pre-push hook" test ! -f .git/hooks/pre-push  
+check "no pre-push hook" test ! -f .git/hooks/pre-push
 check "no post-commit hook" test ! -f .git/hooks/post-commit
 check "no post-checkout hook" test ! -f .git/hooks/post-checkout
 
